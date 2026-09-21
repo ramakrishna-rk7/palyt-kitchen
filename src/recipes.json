@@ -1,0 +1,21 @@
+[
+  {
+    "id": "butter-paneer",
+    "name": "Butter Paneer",
+    "price": 280,
+    "ingredients": [
+      { "ingredientId": "paneer", "quantity": 180, "unit": "g" },
+      { "ingredientId": "tomato", "quantity": 100, "unit": "g" },
+      { "ingredientId": "cream", "quantity": 50, "unit": "g" }
+    ]
+  },
+  {
+    "id": "cashew-curry",
+    "name": "Cashew Curry",
+    "price": 320,
+    "ingredients": [
+      { "ingredientId": "cashews", "quantity": 150, "unit": "g" },
+      { "ingredientId": "cream", "quantity": 80, "unit": "g" }
+    ]
+  }
+]

@@ -1,0 +1,6 @@
+[
+  { "id": "paneer", "name": "Paneer", "quantity": 2.1, "unit": "kg", "par": 2 },
+  { "id": "tomato", "name": "Tomato", "quantity": 8, "unit": "kg", "par": 3 },
+  { "id": "cream", "name": "Cream", "quantity": 1, "unit": "kg", "par": 0.5 },
+  { "id": "cashews", "name": "Cashews", "quantity": 1, "unit": "kg", "par": 2 }
+]
