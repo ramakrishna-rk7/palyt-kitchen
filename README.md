@@ -71,13 +71,14 @@ npm run test    # vitest, 10 tests
 
 ## Another day
 
-Real 15-row data, reorder alert separate from availability, persistence, order history.
-Out of scope on purpose.
+Real 15-row data (not supplied), reorder alert separate from availability, persistence, order history. Currently a 4-ingredient stand-in because the original assessment inputs were not available.
 
 ## Files
 
 - `src/App.jsx` — inventory + menu UI, one file
 - `src/logic.js` — `toBase`, `isDishAvailable`, `deductIngredients`
-- `src/stock.json`, `src/recipes.json` — small stand-ins, same shape as the brief; drop real files in
+- `src/stock.json`, `src/recipes.json` — 4-ingredient / 2-recipe dataset matching the assessment schema.
+  The original 15-row `stock.json` was not supplied with my copy of the task materials,
+  so I used a reduced stand-in with the same shape. Drop the real files in; the logic works for any compatible data.
 - `src/logic.test.js` — 10 tests
 - `docs/` — before/after screenshots
