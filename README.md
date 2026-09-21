@@ -5,8 +5,8 @@ Stock → order → menu loop. React + Vite + Vitest.
 ## Run
 ```
 npm install
-npm run dev
-npm run test
+npm run dev     # open http://localhost:5173
+npm run test    # vitest, 10 tests
 ```
 
 ## Rules
@@ -24,6 +24,12 @@ npm run test
 
 ## Manual check
 Paneer 2.1kg/par 2kg = AVAILABLE → Order → 1.92kg = UNAVAILABLE → restock 3kg = AVAILABLE → par 4kg = UNAVAILABLE.
+
+See `docs/order-off-menu.png` (after one order) and `docs/menu-before-order.png` (fresh load).
+
+## Data note
+`stock.json` / `recipes.json` are small stand-ins (4 ingredients, 2 dishes) with the
+shape described in the brief. Drop the real files in; units covered are kg/g, l/ml, pcs.
 
 ## Push
 ```
