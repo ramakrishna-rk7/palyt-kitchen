@@ -92,7 +92,8 @@ export default function App() {
   };
 
   const saveEdit = () => {
-    const e = validate({ ...form, id: editing }, [], false);
+    // Exclude self so renaming onto another ingredient trips the dupe check.
+    const e = validate({ ...form, id: editing }, stock.filter((s) => s.id !== editing), true);
     if (e) return setErr(e);
     setStock(stock.map((s) => s.id === editing
       ? { ...s, name: form.name.trim(), quantity: Number(form.quantity), par: Number(form.par), unit: form.unit }
