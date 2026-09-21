@@ -5,6 +5,64 @@ import { isDishAvailable, deductIngredients } from "./logic";
 
 const UNITS = ["kg", "g", "l", "ml", "pcs"];
 
+// One style table. No CSS files, no libs.
+const S = {
+  page: { padding: "24px 0" },
+  header: {
+    background: "#1c1917", color: "#fafaf9", borderRadius: 16,
+    padding: "22px 26px", marginBottom: 20, display: "flex",
+    justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12,
+  },
+  title: { margin: 0, fontSize: 26 },
+  sub: { margin: "4px 0 0", color: "#a8a29e", fontSize: 14 },
+  health: { background: "#44403c", borderRadius: 999, padding: "6px 14px", fontSize: 13 },
+  grid: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 20 },
+  panel: { background: "#fff", border: "1px solid #e7e5e4", borderRadius: 16, padding: 20 },
+  h2: { margin: "0 0 12px", fontSize: 17 },
+  search: {
+    width: "100%", boxSizing: "border-box", padding: "10px 12px", fontSize: 14,
+    border: "1px solid #d6d3d1", borderRadius: 10, marginBottom: 8,
+  },
+  row: {
+    display: "flex", alignItems: "center", gap: 10, padding: "10px 0",
+    borderBottom: "1px solid #f5f5f4",
+  },
+  name: { fontWeight: 600, fontSize: 14 },
+  meta: { color: "#78716c", fontSize: 13 },
+  grow: { flex: 1, minWidth: 0 },
+  btn: {
+    border: "1px solid #d6d3d1", background: "#fff", borderRadius: 8,
+    padding: "6px 10px", fontSize: 13, cursor: "pointer",
+  },
+  primary: {
+    border: "none", background: "#1c1917", color: "#fff", borderRadius: 8,
+    padding: "8px 12px", fontSize: 13, cursor: "pointer",
+  },
+  order: {
+    width: "100%", border: "none", borderRadius: 10, padding: "10px",
+    fontSize: 14, fontWeight: 600, cursor: "pointer",
+    background: "#15803d", color: "#fff", marginTop: 10,
+  },
+  orderOff: { background: "#e7e5e4", color: "#a8a29e", cursor: "not-allowed" },
+  dish: { border: "1px solid #e7e5e4", borderRadius: 12, padding: 14, marginBottom: 12 },
+  dishTop: { display: "flex", justifyContent: "space-between", alignItems: "baseline" },
+  dishName: { margin: 0, fontSize: 15 },
+  price: { fontWeight: 700, fontSize: 15 },
+  form: { background: "#fafaf9", border: "1px solid #e7e5e4", borderRadius: 12, padding: 12, margin: "10px 0", display: "grid", gap: 8 },
+  input: { padding: "8px 10px", fontSize: 14, border: "1px solid #d6d3d1", borderRadius: 8, width: "100%", boxSizing: "border-box" },
+  err: { background: "#fef2f2", border: "1px solid #fecaca", color: "#b91c1c", borderRadius: 10, padding: "10px 14px", fontSize: 14, marginBottom: 12 },
+};
+
+function Pill({ ok, children }) {
+  return (
+    <span style={{
+      fontSize: 12, fontWeight: 700, borderRadius: 999, padding: "3px 10px",
+      background: ok ? "#dcfce7" : "#fee2e2", color: ok ? "#15803d" : "#b91c1c",
+      whiteSpace: "nowrap",
+    }}>{children}</span>
+  );
+}
+
 function validate({ name, quantity, par, unit, id }, stock, isNew) {
   if (!name.trim()) return "Name required.";
   if (Number.isNaN(Number(quantity)) || Number(quantity) < 0) return "Stock must be number >= 0.";
@@ -25,6 +83,7 @@ export default function App() {
   const [err, setErr] = useState("");
 
   const filtered = stock.filter((s) => s.name.toLowerCase().includes(q.toLowerCase()));
+  const below = stock.filter((s) => s.quantity < s.par).length;
 
   const startEdit = (s) => {
     setEditing(s.id);
@@ -33,7 +92,6 @@ export default function App() {
   };
 
   const saveEdit = () => {
-    const cur = stock.find((s) => s.id === editing);
     const e = validate({ ...form, id: editing }, [], false);
     if (e) return setErr(e);
     setStock(stock.map((s) => s.id === editing
@@ -63,55 +121,85 @@ export default function App() {
     setErr("");
   };
 
-  const formUI = (onSave, onCancel) => (
-    <div style={{ border: "1px solid #ccc", padding: 8, margin: "8px 0" }}>
-      <input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-      <input placeholder="Stock" type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} style={{ width: 80 }} />
-      <select value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}>
-        {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
-      </select>
-      <input placeholder="Par" type="number" value={form.par} onChange={(e) => setForm({ ...form, par: e.target.value })} style={{ width: 80 }} />
-      <button onClick={onSave}>Save</button>
-      <button onClick={onCancel}>Cancel</button>
+  const formUI = (onSave, onCancel, label) => (
+    <div style={S.form}>
+      <input style={S.input} placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+      <div style={{ display: "flex", gap: 8 }}>
+        <input style={S.input} placeholder="Stock" type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
+        <select style={S.input} value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}>
+          {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
+        </select>
+        <input style={S.input} placeholder="Par" type="number" value={form.par} onChange={(e) => setForm({ ...form, par: e.target.value })} />
+      </div>
+      <div style={{ display: "flex", gap: 8 }}>
+        <button style={{ ...S.primary, flex: 1 }} onClick={onSave}>{label}</button>
+        <button style={{ ...S.btn, flex: 1 }} onClick={onCancel}>Cancel</button>
+      </div>
     </div>
   );
 
   return (
-    <div style={{ padding: 16 }}>
-      <h1>Palyt Kitchen</h1>
-      {err && <p style={{ color: "red" }}>{err}</p>}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+    <div style={S.page}>
+      <header style={S.header}>
         <div>
-          <h2>Inventory</h2>
-          <input placeholder="Search ingredients..." value={q} onChange={(e) => setQ(e.target.value)} />
-          {filtered.map((s) => (
-            <div key={s.id} style={{ borderBottom: "1px solid #eee", padding: "6px 0" }}>
-              <b>{s.name}</b> {s.quantity} {s.unit} / par {s.par} {s.unit}{" "}
-              <span style={{ color: s.quantity < s.par ? "red" : "green" }}>
-                {s.quantity < s.par ? "Below Par" : "OK"}
-              </span>{" "}
-              {editing === s.id ? formUI(saveEdit, () => setEditing(null)) : (
-                <><button onClick={() => startEdit(s)}>Edit</button><button onClick={() => del(s)}>Delete</button></>
-              )}
-            </div>
-          ))}
-          {!showAdd
-            ? <button onClick={() => { setShowAdd(true); setForm({ name: "", quantity: "", par: "", unit: "kg" }); setErr(""); }}>+ Add Ingredient</button>
-            : formUI(addNew, () => setShowAdd(false))}
+          <h1 style={S.title}>Palyt Kitchen</h1>
+          <p style={S.sub}>Stock → order → menu. One order can take a dish off.</p>
         </div>
-        <div>
-          <h2>Menu</h2>
-          {recipes.map((d) => {
-            const ok = isDishAvailable(d, stock);
+        <div style={S.health}>{below === 0 ? "All stock above par" : `${below} below par`}</div>
+      </header>
+
+      {err && <div style={S.err}>{err}</div>}
+
+      <div style={S.grid}>
+        <section style={S.panel}>
+          <h2 style={S.h2}>Inventory</h2>
+          <input style={S.search} placeholder="Search ingredients..." value={q} onChange={(e) => setQ(e.target.value)} />
+          {filtered.map((s) => {
+            const ok = s.quantity >= s.par;
             return (
-              <div key={d.id} style={{ border: "1px solid #ddd", padding: 8, marginBottom: 8 }}>
-                <b>{d.name}</b> ₹{d.price}<br />
-                <span style={{ color: ok ? "green" : "red" }}>{ok ? "AVAILABLE" : "UNAVAILABLE"}</span>{" "}
-                <button disabled={!ok} onClick={() => setStock(deductIngredients(d, stock))}>Order</button>
+              <div key={s.id}>
+                <div style={S.row}>
+                  <div style={S.grow}>
+                    <div style={S.name}>{s.name}</div>
+                    <div style={S.meta}>{s.quantity} {s.unit} in stock · par {s.par} {s.unit}</div>
+                  </div>
+                  <Pill ok={ok}>{ok ? "OK" : "Below par"}</Pill>
+                  {editing !== s.id && <>
+                    <button style={S.btn} onClick={() => startEdit(s)}>Edit</button>
+                    <button style={S.btn} onClick={() => del(s)}>Delete</button>
+                  </>}
+                </div>
+                {editing === s.id && formUI(saveEdit, () => setEditing(null), "Save")}
               </div>
             );
           })}
-        </div>
+          {!showAdd
+            ? <button style={{ ...S.btn, marginTop: 12 }} onClick={() => { setShowAdd(true); setForm({ name: "", quantity: "", par: "", unit: "kg" }); setErr(""); }}>+ Add ingredient</button>
+            : formUI(addNew, () => setShowAdd(false), "Add")}
+        </section>
+
+        <section style={S.panel}>
+          <h2 style={S.h2}>Menu</h2>
+          {recipes.map((d) => {
+            const ok = isDishAvailable(d, stock);
+            return (
+              <div key={d.id} style={S.dish}>
+                <div style={S.dishTop}>
+                  <h3 style={S.dishName}>{d.name}</h3>
+                  <span style={S.price}>₹{d.price}</span>
+                </div>
+                <div style={{ marginTop: 8 }}>
+                  <Pill ok={ok}>{ok ? "Available" : "Unavailable"}</Pill>
+                </div>
+                <button
+                  style={{ ...S.order, ...(!ok ? S.orderOff : {}) }}
+                  disabled={!ok}
+                  onClick={() => setStock(deductIngredients(d, stock))}
+                >{ok ? "Order" : "Off menu"}</button>
+              </div>
+            );
+          })}
+        </section>
       </div>
     </div>
   );
