@@ -45,6 +45,9 @@ npm run test    # vitest, 10 tests
 - Missing ingredient in a recipe = unavailable (fail closed).
 - Delete blocked when a recipe uses the ingredient (e.g. cashews); unused ones (e.g. bay leaves) delete cleanly.
 - Validation: name required, stock ≥ 0, par > 0, unit in kg/g/l/ml/pcs, no duplicates.
+  Renaming onto an existing name is blocked too:
+
+![Renaming Tomato to Paneer is rejected](docs/edit-duplicate-error.png)
 
 ## Design decisions
 
