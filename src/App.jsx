@@ -122,12 +122,12 @@ export default function App() {
     setErr("");
   };
 
-  const formUI = (onSave, onCancel, label) => (
+  const formUI = (onSave, onCancel, label, lockUnit) => (
     <div style={S.form}>
       <input style={S.input} placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
       <div style={{ display: "flex", gap: 8 }}>
         <input style={S.input} placeholder="Stock" type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
-        <select style={S.input} value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}>
+        <select style={S.input} value={form.unit} disabled={lockUnit} title={lockUnit ? "Unit fixed on edit" : undefined} onChange={(e) => setForm({ ...form, unit: e.target.value })}>
           {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
         </select>
         <input style={S.input} placeholder="Par" type="number" value={form.par} onChange={(e) => setForm({ ...form, par: e.target.value })} />
@@ -170,7 +170,7 @@ export default function App() {
                     <button style={S.btn} onClick={() => del(s)}>Delete</button>
                   </>}
                 </div>
-                {editing === s.id && formUI(saveEdit, () => setEditing(null), "Save")}
+                {editing === s.id && formUI(saveEdit, () => setEditing(null), "Save", true)}
               </div>
             );
           })}
